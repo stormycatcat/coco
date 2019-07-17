@@ -3,6 +3,7 @@
 #include <cstdio>
 #include "context.h"
 #include "fiber.h"
+#include "scheduler.h"
 
 void fn1(intptr_t);
 void fn2(intptr_t);
@@ -30,8 +31,21 @@ int main()
     // tls_main_ctx().switch_to(fb1);
     // printf("main return\n");
 
-    Fiber fiber([]{
-        printf("haha\n");
-    }, 40960);
-    fiber.switch_in();
+    Fiber fiber1([]{
+        for (;;) {
+            printf("haha\n");
+            yield;
+        }
+    }, 4096);
+
+    Fiber fiber2([]{
+        for (int i = 0; i < 1000; ++i) {
+            printf("aaaaaaaaaaa\n");
+            yield;
+        }
+    }, 4096);
+
+    for (;;) {
+        sched;
+    }
 }

@@ -13,6 +13,7 @@ add_library(coco STATIC
     coco/jump_fcontext.S
     coco/context.cpp
     coco/fiber.cpp
+    coco/scheduler.cpp
 )
 target_link_libraries(coco pthread)
 
