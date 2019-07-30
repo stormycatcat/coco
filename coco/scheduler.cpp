@@ -1,14 +1,28 @@
 #include "scheduler.h"
-#include "fiber.h"
 
-void Scheduler::schedule()
+#include <sys/types.h>
+#include <sys/epoll.h>
+#include <thread>
+#include "fiber.h"
+#include "event/dispatcher.h"
+
+Scheduler::Scheduler(): dispatcher_(new Dispatcher(1024))
 {
-    if (fibers_.empty())
-        return;
+    Dispatcher *d = dispatcher_;
+    std::thread th([=] {
+        d->run();
+    });
+    th.detach();
+}
+
+void Scheduler::__schedule()
+{
     if (cur_fiber_id_ >= fibers_.size())
         cur_fiber_id_ = 0;
     if (fibers_[cur_fiber_id_]->status() == FiberStatus::RUNNING) {
+        cur_fiber_ = fibers_[cur_fiber_id_];
         fibers_[cur_fiber_id_]->switch_in();
+        cur_fiber_ = nullptr;
         if (fibers_[cur_fiber_id_]->status() == FiberStatus::DEAD) {
             fibers_.erase(fibers_.begin() + cur_fiber_id_);
         }
@@ -19,6 +33,25 @@ void Scheduler::schedule()
 void Scheduler::add_fiber(Fiber *fiber)
 {
     fibers_.push_back(fiber);
+}
+
+void Scheduler::add_read_event(int fd)
+{
+    this_fiber->status_ = FiberStatus::BLOCK;
+    dispatcher_->add_event(fd, EPOLLIN);
+    __yield();
+}
+
+void Scheduler::add_write_event(int fd)
+{
+    this_fiber->status_ = FiberStatus::BLOCK;
+    dispatcher_->add_event(fd, EPOLLOUT);
+    __yield();
+}
+
+void Scheduler::remove_event(int fd)
+{
+    dispatcher_->remove_event(fd);
 }
 
 void Scheduler::__yield()

@@ -8,7 +8,8 @@
 
 #include <cstdint>
 
-typedef void *  fcontext_t;
+using fcontext_t = void *;
+using fcontext_fn_t = void (*)(intptr_t);
 
 extern "C" 
 intptr_t jump_fcontext(fcontext_t *ofc, fcontext_t nfc,
