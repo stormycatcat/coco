@@ -9,8 +9,8 @@ extern "C" ssize_t read(int fd, void *buf, size_t bytes)
     ssize_t ret;
     if (is_main_fiber() || !fdctx || !fdctx->is_hooked || fdctx->is_nonblock)
         return read_fn(fd, buf, bytes);
-    sched->add_read_event(fd);
+    sched->poll_read_event(fd);
     ret = read_fn(fd, buf, bytes);
-    sched->add_read_event(fd);
+    sched->poll_read_event(fd);
     return ret;
 }

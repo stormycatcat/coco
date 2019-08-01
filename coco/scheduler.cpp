@@ -35,23 +35,40 @@ void Scheduler::add_fiber(Fiber *fiber)
     fibers_.push_back(fiber);
 }
 
-void Scheduler::add_read_event(int fd)
+void Scheduler::poll_read_event(int fd)
 {
     this_fiber->status_ = FiberStatus::BLOCK;
     dispatcher_->add_event(fd, EPOLLIN);
     __yield();
 }
 
-void Scheduler::add_write_event(int fd)
+void Scheduler::poll_write_event(int fd)
 {
     this_fiber->status_ = FiberStatus::BLOCK;
     dispatcher_->add_event(fd, EPOLLOUT);
     __yield();
 }
 
-void Scheduler::remove_event(int fd)
+void Scheduler::poll_rdwr_event(int fd)
 {
-    dispatcher_->remove_event(fd);
+    this_fiber->status_ = FiberStatus::BLOCK;
+    dispatcher_->add_event(fd, EPOLLIN | EPOLLOUT);
+    __yield();
+}
+
+void Scheduler::remove_read_event(int fd)
+{
+    dispatcher_->remove_event(fd, EPOLLIN);
+}
+
+void Scheduler::remove_write_event(int fd)
+{
+    dispatcher_->remove_event(fd, EPOLLOUT);
+}
+
+void Scheduler::remove_rdwr_event(int fd)
+{
+    dispatcher_->remove_event(fd, EPOLLIN | EPOLLOUT);
 }
 
 void Scheduler::__yield()

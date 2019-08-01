@@ -17,8 +17,8 @@ extern "C" int connect(int fd, const sockaddr *sa, socklen_t len)
         if (connect_fn(fd, sa, len) == -1) {
             if (errno != EINPROGRESS)
                 return -1;
-            sched->add_write_event(fd);
-            sched->remove_event(fd);
+            sched->poll_write_event(fd);
+            sched->remove_write_event(fd);
             if (this_fiber->revents() & (EPOLLERR | EPOLLHUP)) {
                 errno = ECONNREFUSED;
                 return -1;

@@ -10,8 +10,8 @@ extern "C" ssize_t send(int fd, const void *buf, size_t bytes, int flags)
     
     if (is_main_fiber() || !fdctx || !fdctx->is_hooked || fdctx->is_nonblock)
         return send_fn(fd, buf, bytes, flags);
-    sched->add_write_event(fd);
+    sched->poll_write_event(fd);
     ret = send_fn(fd, buf, bytes, flags);
-    sched->add_write_event(fd);
+    sched->poll_write_event(fd);
     return ret;
 }

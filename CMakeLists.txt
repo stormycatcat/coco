@@ -11,8 +11,8 @@ enable_language(ASM)
 add_library(coco_base STATIC
     coco/make_fcontext.S
     coco/jump_fcontext.S
-    coco/scheduler.cpp
     coco/event/dispatcher.cpp
+    coco/scheduler.cpp
 )
 target_link_libraries(coco_base pthread)
 

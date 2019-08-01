@@ -20,9 +20,12 @@ public:
 
     void add_fiber(Fiber *fiber);
 
-    void add_read_event(int fd);
-    void add_write_event(int fd);
-    void remove_event(int fd);
+    void poll_read_event(int fd);
+    void poll_write_event(int fd);
+    void poll_rdwr_event(int fd);
+    void remove_read_event(int fd);
+    void remove_write_event(int fd);
+    void remove_rdwr_event(int fd);
 
     Fiber *__this_fiber()
     {
