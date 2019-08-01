@@ -20,7 +20,7 @@ void Scheduler::__schedule()
     if (cur_fiber_id_ >= fibers_.size())
         cur_fiber_id_ = 0;
     if (fibers_[cur_fiber_id_]->status() == FiberStatus::RUNNING) {
-        cur_fiber_ = fibers_[cur_fiber_id_];
+        cur_fiber_ = fibers_[cur_fiber_id_].get();
         fibers_[cur_fiber_id_]->switch_in();
         cur_fiber_ = nullptr;
         if (fibers_[cur_fiber_id_]->status() == FiberStatus::DEAD) {
@@ -32,7 +32,7 @@ void Scheduler::__schedule()
 
 void Scheduler::add_fiber(Fiber *fiber)
 {
-    fibers_.push_back(fiber);
+    fibers_.emplace_back(fiber);
 }
 
 void Scheduler::poll_read_event(int fd)

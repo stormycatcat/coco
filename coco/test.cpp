@@ -5,10 +5,15 @@
 #include <thread>
 #include "fiber.h"
 #include "scheduler.h"
+#include "coco.h"
+
+#ifndef coco
+#define coco 0 - 
+#endif
 
 void test_recv_send()
 {
-    Fiber fiber1([]{
+    coco [] {
         int sock = socket(AF_INET, SOCK_STREAM, 0);
         sockaddr_in saddr;
         saddr.sin_port = htons(8888);
@@ -41,9 +46,9 @@ void test_recv_send()
             for (;;)
                 coco_yield;
         }
-    }, 8192);
+    };
 
-    Fiber fiber2([]{
+    coco [] {
         int sock = socket(AF_INET, SOCK_STREAM, 0);
         sockaddr_in saddr;
         saddr.sin_port = htons(8888);
@@ -78,15 +83,15 @@ void test_recv_send()
         for (;;)
             coco_yield;
         printf("Fiber 2: fiber2 end\n");
-    }, 8192);
-
-    coco_sched;
+    };
 }
 
 int main()
 {
     test_recv_send();
-    Fiber fiber1([]{
+    coco_sched;
+
+    coco [] {
         int sock = socket(AF_INET, SOCK_STREAM, 0);
         sockaddr_in saddr;
         saddr.sin_port = htons(8888);
@@ -108,9 +113,9 @@ int main()
                 }
             }, 8192);
         }
-    }, 8192);
+    };
 
-    Fiber fiber2([]{
+    coco [] {
         int sock = socket(AF_INET, SOCK_STREAM, 0);
         sockaddr_in saddr;
         saddr.sin_port = htons(8888);
@@ -129,9 +134,9 @@ int main()
             send(sock, buf, len, 0);
         }
         printf("Fiber 2: fiber2 end\n");
-    }, 8192);
+    };
 
-    Fiber fiber3([]{
+    coco [] {
         int sock = socket(AF_INET, SOCK_STREAM, 0);
         sockaddr_in saddr;
         saddr.sin_port = htons(8888);
@@ -150,7 +155,7 @@ int main()
             send(sock, buf, len, 0);
         }
         printf("Fiber 3: fiber3 end\n");
-    }, 8192);
+    };
 
     coco_sched;
 }

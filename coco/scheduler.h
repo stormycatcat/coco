@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cassert>
+#include <memory>
 
 #define coco_yield  do { coco_scheduler()->__yield(); } while (0)
 #define coco_sched  do {coco_scheduler()->__schedule(); } while (1)
@@ -36,7 +37,7 @@ public:
 
 private:
     Dispatcher *dispatcher_;
-    std::vector<Fiber *> fibers_ {};
+    std::vector<std::shared_ptr<Fiber>> fibers_ {};
     Fiber *cur_fiber_ = nullptr;
     int cur_fiber_id_ = 0;
     int running_count_ = 0;
