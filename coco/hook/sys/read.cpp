@@ -11,6 +11,5 @@ extern "C" ssize_t read(int fd, void *buf, size_t bytes)
         return read_fn(fd, buf, bytes);
     sched->poll_read_event(fd);
     ret = read_fn(fd, buf, bytes);
-    sched->poll_read_event(fd);
     return ret;
 }

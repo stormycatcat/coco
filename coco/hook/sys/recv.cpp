@@ -12,6 +12,5 @@ extern "C" ssize_t recv(int fd, void *buf, size_t bytes, int flags)
         return recv_fn(fd, buf, bytes, flags);
     sched->poll_read_event(fd);
     ret = recv_fn(fd, buf, bytes, flags);
-    sched->poll_read_event(fd);
     return ret;
 }

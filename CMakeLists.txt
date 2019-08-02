@@ -30,7 +30,14 @@ add_library(coco_hook STATIC
 )
 target_link_libraries(coco_hook dl coco_base)
 
+
+
 add_executable(test
-    coco/test.cpp
+    coco/test/test.cpp
 )
 target_link_libraries(test coco_base coco_hook)
+
+add_executable(echo
+    coco/test/echo.cpp
+)
+target_link_libraries(echo coco_base coco_hook)

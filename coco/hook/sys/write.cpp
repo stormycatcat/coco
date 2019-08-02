@@ -12,6 +12,5 @@ extern "C" ssize_t write(int fd, const void *buf, size_t bytes)
         return write_fn(fd, buf, bytes);
     sched->poll_write_event(fd);
     ret = write_fn(fd, buf, bytes);
-    sched->poll_write_event(fd);
     return ret;
 }
